@@ -203,7 +203,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginHorizontal="16dp"
+            android:padding="16dp"
             android:background="@drawable/camera_button_background"
+            android:scaleType="fitCenter"
             android:src="@drawable/round_camera_alt_24"
             app:tint="@color/white" />
 
