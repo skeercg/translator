@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.translator.R
@@ -30,10 +31,7 @@ class TranslatorFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.sourceTextFieldLabel.visibility = View.GONE
-        binding.targetTextFieldLabel.visibility = View.GONE
-        binding.copySourceTextButton.visibility = View.GONE
-        binding.copyTargetTextButton.visibility = View.GONE
+        toggleVisibility(false)
 
         binding.copyTargetTextButton.setOnClickListener {
             copyToClipboard(viewModel.targetText.value)
@@ -47,7 +45,7 @@ class TranslatorFragment : Fragment() {
         binding.sourceTextFieldLabel.text = setLanguage(viewModel.sourceLanguage)
         binding.targetTextFieldLabel.text = setLanguage(viewModel.targetLanguage)
 
-        binding.sourceTextField.addTextChangedListener(setTextWatcher())
+        binding.sourceTextField.addTextChangedListener(TranslatorTextWatcher())
         binding.sourceTextField.onFocusChangeListener = setOnFocusChangeListener()
 
         binding.swapLanguageButton.setOnClickListener {
@@ -57,9 +55,9 @@ class TranslatorFragment : Fragment() {
         viewModel.targetText.observe(viewLifecycleOwner) { content ->
             binding.targetTextField.setText(content)
             if (content.isNullOrEmpty()) {
-                binding.divider.visibility = View.GONE
+                toggleVisibility(false)
             } else {
-                binding.divider.visibility = View.VISIBLE
+                toggleVisibility(true)
             }
         }
 
@@ -83,40 +81,39 @@ class TranslatorFragment : Fragment() {
         binding.targetLanguage.text = setLanguage(viewModel.targetLanguage)
         binding.sourceTextFieldLabel.text = setLanguage(viewModel.sourceLanguage)
         binding.targetTextFieldLabel.text = setLanguage(viewModel.targetLanguage)
+
+        binding.sourceTextField.setText(viewModel.targetText.value ?: "")
+        binding.targetTextField.setText("")
+
+        toggleVisibility(false)
+        viewModel.translate()
     }
 
-    private fun setTextWatcher(): TextWatcher {
-        return object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+    inner class TranslatorTextWatcher : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.sourceText.value = s.toString()
-                viewModel.translate()
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            viewModel.sourceText.value = s.toString()
+            viewModel.translate()
         }
+
+        override fun afterTextChanged(s: Editable?) {}
     }
 
     private fun setOnFocusChangeListener(): View.OnFocusChangeListener {
         return View.OnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
-                val showLabels = viewModel.sourceText.value?.isNotEmpty()
-                if (showLabels != null && showLabels) {
-                    binding.sourceTextFieldLabel.visibility = View.VISIBLE
-                    binding.targetTextFieldLabel.visibility = View.VISIBLE
-                    binding.copySourceTextButton.visibility = View.VISIBLE
-                    binding.copyTargetTextButton.visibility = View.VISIBLE
+                val sourceNotEmpty = (viewModel.sourceText.value?.isNotEmpty() ?: false)
+                val targetNotEmpty = (viewModel.targetText.value?.isNotEmpty() ?: false)
+                if (sourceNotEmpty && targetNotEmpty) {
+                    toggleVisibility(true)
                 }
 
                 val inputMethodManager =
                     context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(binding.root.windowToken, 0)
             } else {
-                binding.sourceTextFieldLabel.visibility = View.GONE
-                binding.targetTextFieldLabel.visibility = View.GONE
-                binding.copySourceTextButton.visibility = View.GONE
-                binding.copyTargetTextButton.visibility = View.GONE
+                toggleVisibility(false)
             }
         }
     }
@@ -126,5 +123,12 @@ class TranslatorFragment : Fragment() {
             context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText("Translation", text)
         clipboardManager.setPrimaryClip(clipData)
+    }
+
+    private fun toggleVisibility(value: Boolean) {
+        binding.sourceTextFieldLabel.isVisible = value
+        binding.targetTextFieldLabel.isVisible = value
+        binding.copySourceTextButton.isVisible = value
+        binding.copyTargetTextButton.isVisible = value
     }
 }

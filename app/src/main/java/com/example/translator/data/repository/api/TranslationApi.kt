@@ -1,9 +1,12 @@
 package com.example.translator.data.repository.api
 
-import retrofit2.http.GET
+import com.example.translator.data.model.TranslateTextRequest
+import com.example.translator.data.model.TranslateTextResponse
+import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface TranslationApi {
-    @POST("/translate")
-    suspend fun translate(): Unit
+    @POST("/translate/text")
+    fun translate(@Body body: TranslateTextRequest): Call<TranslateTextResponse>
 }

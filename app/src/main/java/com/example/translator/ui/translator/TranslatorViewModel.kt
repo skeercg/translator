@@ -3,6 +3,7 @@ package com.example.translator.ui.translator
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.translator.data.model.TranslateTextRequest
 import com.example.translator.data.repository.TranslationRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -28,7 +29,12 @@ class TranslatorViewModel(
             if (source == null) {
                 targetText.value = ""
             } else {
-                targetText.value = translationRepository.translate(source = source)
+                val requestText = sourceText.value ?: ""
+                if (requestText.isNotEmpty()) {
+                    val request = TranslateTextRequest(sourceLanguage, targetLanguage, requestText)
+
+                    targetText.value = translationRepository.translate(request).translation
+                }
             }
         }
     }
