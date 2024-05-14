@@ -33,7 +33,7 @@ class TranslatorViewModel(
                 if (requestText.isNotEmpty()) {
                     val request = TranslateTextRequest(sourceLanguage, targetLanguage, requestText)
 
-                    targetText.value = translationRepository.translate(request).translation
+                    targetText.value = translationRepository.translateText(request).translation
                 }
             }
         }

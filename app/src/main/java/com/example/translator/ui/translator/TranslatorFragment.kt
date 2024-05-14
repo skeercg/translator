@@ -3,18 +3,23 @@ package com.example.translator.ui.translator
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.translator.R
 import com.example.translator.databinding.FragmentTranslatorBinding
+import com.example.translator.ui.camera.CameraActivity
 
 
 class TranslatorFragment : Fragment() {
@@ -32,13 +37,7 @@ class TranslatorFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         toggleVisibility(false)
-
-        binding.copyTargetTextButton.setOnClickListener {
-            copyToClipboard(viewModel.targetText.value)
-        }
-        binding.copySourceTextButton.setOnClickListener {
-            copyToClipboard(viewModel.sourceText.value)
-        }
+        setOnClickListeners()
 
         binding.sourceLanguage.text = setLanguage(viewModel.sourceLanguage)
         binding.targetLanguage.text = setLanguage(viewModel.targetLanguage)
@@ -47,10 +46,6 @@ class TranslatorFragment : Fragment() {
 
         binding.sourceTextField.addTextChangedListener(TranslatorTextWatcher())
         binding.sourceTextField.onFocusChangeListener = setOnFocusChangeListener()
-
-        binding.swapLanguageButton.setOnClickListener {
-            swapLanguage()
-        }
 
         viewModel.targetText.observe(viewLifecycleOwner) { content ->
             binding.targetTextField.setText(content)
@@ -100,6 +95,21 @@ class TranslatorFragment : Fragment() {
         override fun afterTextChanged(s: Editable?) {}
     }
 
+    private fun setOnClickListeners() {
+        binding.copyTargetTextButton.setOnClickListener {
+            copyToClipboard(viewModel.targetText.value)
+        }
+        binding.copySourceTextButton.setOnClickListener {
+            copyToClipboard(viewModel.sourceText.value)
+        }
+        binding.swapLanguageButton.setOnClickListener {
+            swapLanguage()
+        }
+        binding.cameraButton.setOnClickListener {
+            startCameraActivity()
+        }
+    }
+
     private fun setOnFocusChangeListener(): View.OnFocusChangeListener {
         return View.OnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
@@ -130,5 +140,30 @@ class TranslatorFragment : Fragment() {
         binding.targetTextFieldLabel.isVisible = value
         binding.copySourceTextButton.isVisible = value
         binding.copyTargetTextButton.isVisible = value
+    }
+
+    private val getImageLauncher = registerForActivityResult(
+        CameraActivityResultContract(),
+        CameraActivityResultCallback(),
+    )
+
+    inner class CameraActivityResultCallback : ActivityResultCallback<Int?> {
+        override fun onActivityResult(result: Int?) {
+            Log.d("ACTIVITY RESULT", "num: $result")
+        }
+    }
+
+    inner class CameraActivityResultContract : ActivityResultContract<Unit?, Int?>() {
+        override fun createIntent(context: Context, input: Unit?): Intent {
+            return Intent(context, CameraActivity::class.java)
+        }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): Int? {
+            return intent?.getIntExtra("num", 0)
+        }
+    }
+
+    private fun startCameraActivity() {
+        getImageLauncher.launch(null)
     }
 }
