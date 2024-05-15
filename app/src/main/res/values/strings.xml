@@ -3,4 +3,7 @@
     <string name="rus">Russian</string>
     <string name="eng">English</string>
     <string name="enter_text">Enter text</string>
+    <string name="source_language">Source language</string>
+    <string name="target_language">Target language</string>
+
 </resources>

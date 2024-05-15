@@ -1,5 +1,6 @@
 package com.example.translator.ui.translator
 
+import HistoryFragment
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -12,6 +13,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.example.translator.R
 import com.example.translator.databinding.FragmentTranslatorBinding
@@ -50,6 +52,11 @@ class TranslatorFragment : Fragment() {
 
         binding.swapLanguageButton.setOnClickListener {
             swapLanguage()
+        }
+
+        binding.historyButton.setOnClickListener {
+            // Handle click on the button
+            handleHistoryClick()
         }
 
         viewModel.targetText.observe(viewLifecycleOwner) { content ->
@@ -130,5 +137,25 @@ class TranslatorFragment : Fragment() {
         binding.targetTextFieldLabel.isVisible = value
         binding.copySourceTextButton.isVisible = value
         binding.copyTargetTextButton.isVisible = value
+    }
+
+    private fun handleHistoryClick() {
+        // Create an instance of the AnotherFragment
+        val historyFragment = HistoryFragment()
+
+        // Get the FragmentManager
+        val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
+
+        // Begin the fragment transaction
+        val transaction = fragmentManager.beginTransaction()
+
+        // Replace the current fragment with AnotherFragment
+        transaction.replace(R.id.fragment_translator, historyFragment)
+
+        // Add the transaction to the back stack (optional)
+        transaction.addToBackStack(null)
+
+        // Commit the transaction
+        transaction.commit()
     }
 }
