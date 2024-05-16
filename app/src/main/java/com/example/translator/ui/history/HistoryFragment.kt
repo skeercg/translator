@@ -1,3 +1,5 @@
+package com.example.translator.ui.history
+
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -5,28 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.translator.data.model.Translation
-import com.example.translator.data.repository.api.RetrofitClient
-import com.example.translator.data.repository.api.TranslationApi
 import com.example.translator.databinding.FragmentHistoryBinding
-import com.example.translator.ui.translator.HistoryAdapter
-import com.example.translator.ui.translator.HistoryViewModel
+import com.example.translator.ui.history.recycler.HistoryAdapter
+import com.example.translator.ui.history.viewmodel.HistoryViewModel
+import com.example.translator.ui.history.viewmodel.HistoryViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HistoryFragment : Fragment() {
     private lateinit var binding: FragmentHistoryBinding
-    private val viewModel: HistoryViewModel by lazy {
-        ViewModelProvider(
-            this,
-            HistoryViewModel.Provider(RetrofitClient.translationApi)
-        ).get<HistoryViewModel>(HistoryViewModel::class.java)
-    }
+    private val viewModel: HistoryViewModel by viewModels { HistoryViewModelFactory() }
     private var adapter: HistoryAdapter? = null
 
     override fun onCreateView(

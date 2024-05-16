@@ -1,4 +1,4 @@
-package com.example.translator.ui.translator
+package com.example.translator.ui.history.recycler
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.translator.data.model.Translation

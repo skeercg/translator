@@ -1,4 +1,4 @@
-package com.example.translator.ui.translator
+package com.example.translator.ui.history.recycler
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

@@ -1,6 +1,6 @@
 package com.example.translator.ui.translator
 
-import HistoryFragment
+import com.example.translator.ui.history.HistoryFragment
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
