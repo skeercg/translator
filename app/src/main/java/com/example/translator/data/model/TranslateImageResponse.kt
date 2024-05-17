@@ -2,7 +2,7 @@ package com.example.translator.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class TranslateTextResponse(
+data class TranslateImageResponse(
     @SerializedName("sourceText")
     val sourceText: String,
 
