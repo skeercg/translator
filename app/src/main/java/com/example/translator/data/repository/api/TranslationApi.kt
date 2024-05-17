@@ -10,7 +10,6 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
-import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Part
 
@@ -24,7 +23,6 @@ interface TranslationApi {
         @Part("body") body: TranslateImageRequest,
         @Part image: MultipartBody.Part,
     ): Call<TranslateImageResponse>
-    fun translate(@Body body: TranslateTextRequest): Call<TranslateTextResponse>
 
     @GET("/translate/history")
     fun fetchTranslationsList(): Call<TranslationHistoryResponse>

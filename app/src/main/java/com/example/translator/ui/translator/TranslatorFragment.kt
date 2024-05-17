@@ -56,11 +56,6 @@ class TranslatorFragment : Fragment() {
             binding.sourceTextField.addTextChangedListener(sourceTextFieldWatcher)
         }
 
-        binding.historyButton.setOnClickListener {
-            // Handle click on the button
-            handleHistoryClick()
-        }
-
         viewModel.targetText.observe(viewLifecycleOwner) { content ->
             binding.targetTextField.setText(content)
             if (content.isNullOrEmpty()) {
@@ -121,6 +116,10 @@ class TranslatorFragment : Fragment() {
         }
         binding.cameraButton.setOnClickListener {
             startCameraActivity()
+        }
+        binding.historyButton.setOnClickListener {
+            // Handle click on the button
+            handleHistoryClick()
         }
     }
 
