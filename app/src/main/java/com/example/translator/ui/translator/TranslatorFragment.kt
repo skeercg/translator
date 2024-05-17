@@ -81,7 +81,7 @@ class TranslatorFragment : Fragment() {
         binding.targetTextField.setText("")
 
         toggleVisibility(false)
-        viewModel.translate()
+        viewModel.translateText()
     }
 
     inner class TranslatorTextWatcher : TextWatcher {
@@ -89,7 +89,7 @@ class TranslatorFragment : Fragment() {
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             viewModel.sourceText.value = s.toString()
-            viewModel.translate()
+            viewModel.translateText()
         }
 
         override fun afterTextChanged(s: Editable?) {}
@@ -140,30 +140,33 @@ class TranslatorFragment : Fragment() {
         binding.targetTextFieldLabel.isVisible = value
         binding.copySourceTextButton.isVisible = value
         binding.copyTargetTextButton.isVisible = value
+        binding.divider.isVisible = value
     }
 
-    private val getImageLauncher = registerForActivityResult(
+    private val captureImageLauncher = registerForActivityResult(
         CameraActivityResultContract(),
         CameraActivityResultCallback(),
     )
 
-    inner class CameraActivityResultCallback : ActivityResultCallback<Int?> {
-        override fun onActivityResult(result: Int?) {
-            Log.d("ACTIVITY RESULT", "num: $result")
+    inner class CameraActivityResultCallback : ActivityResultCallback<ByteArray?> {
+        override fun onActivityResult(result: ByteArray?) {
+            Log.d("ACTIVITY RESULT", "$result")
+
+            viewModel.translateImage(result)
         }
     }
 
-    inner class CameraActivityResultContract : ActivityResultContract<Unit?, Int?>() {
+    inner class CameraActivityResultContract : ActivityResultContract<Unit?, ByteArray?>() {
         override fun createIntent(context: Context, input: Unit?): Intent {
             return Intent(context, CameraActivity::class.java)
         }
 
-        override fun parseResult(resultCode: Int, intent: Intent?): Int? {
-            return intent?.getIntExtra("num", 0)
+        override fun parseResult(resultCode: Int, intent: Intent?): ByteArray? {
+            return intent?.getByteArrayExtra("image")
         }
     }
 
     private fun startCameraActivity() {
-        getImageLauncher.launch(null)
+        captureImageLauncher.launch(null)
     }
 }

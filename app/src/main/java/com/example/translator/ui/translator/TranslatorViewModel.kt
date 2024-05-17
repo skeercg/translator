@@ -3,7 +3,9 @@ package com.example.translator.ui.translator
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.translator.data.model.TranslateImageRequest
 import com.example.translator.data.model.TranslateTextRequest
+import com.example.translator.data.model.TranslateTextResponse
 import com.example.translator.data.repository.TranslationRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -15,14 +17,14 @@ class TranslatorViewModel(
     var targetLanguage: String = "rus"
     var sourceLanguage: String = "eng"
 
-    var sourceText: MutableLiveData<String> = MutableLiveData<String>()
-    var targetText: MutableLiveData<String> = MutableLiveData<String>()
+    val sourceText: MutableLiveData<String> = MutableLiveData<String>()
+    val targetText: MutableLiveData<String> = MutableLiveData<String>()
 
-    private var translationJob: Job? = null
-    fun translate() {
-        translationJob?.cancel()
+    private var translationTextJob: Job? = null
+    fun translateText() {
+        translationTextJob?.cancel()
 
-        translationJob = viewModelScope.launch {
+        translationTextJob = viewModelScope.launch {
             delay(500)
 
             val source = sourceText.value
@@ -33,8 +35,30 @@ class TranslatorViewModel(
                 if (requestText.isNotEmpty()) {
                     val request = TranslateTextRequest(sourceLanguage, targetLanguage, requestText)
 
-                    targetText.value = translationRepository.translateText(request).translation
+                    val response = translationRepository.translateText(request)
+
+                    targetText.value = response?.translation ?: ""
                 }
+            }
+        }
+    }
+
+    private var translationImageJob: Job? = null
+
+    fun translateImage(image: ByteArray?) {
+        translationImageJob?.cancel()
+
+        translationImageJob = viewModelScope.launch {
+            delay(500)
+
+            if (image == null) {
+                targetText.value = ""
+            } else {
+                val request = TranslateImageRequest(sourceLanguage, targetLanguage)
+
+                val response = translationRepository.translateImage(request, image)
+
+                targetText.value = response?.translation ?: ""
             }
         }
     }
