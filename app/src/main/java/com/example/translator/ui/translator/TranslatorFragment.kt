@@ -44,9 +44,15 @@ class TranslatorFragment : Fragment() {
         binding.sourceTextFieldLabel.text = setLanguage(viewModel.sourceLanguage)
         binding.targetTextFieldLabel.text = setLanguage(viewModel.targetLanguage)
 
-        binding.sourceTextField.addTextChangedListener(TranslatorTextWatcher())
+        val sourceTextFieldWatcher = TranslatorTextWatcher()
+        binding.sourceTextField.addTextChangedListener(sourceTextFieldWatcher)
         binding.sourceTextField.onFocusChangeListener = setOnFocusChangeListener()
 
+        viewModel.sourceText.observe(viewLifecycleOwner) { content ->
+            binding.sourceTextField.removeTextChangedListener(sourceTextFieldWatcher)
+            binding.sourceTextField.setText(content)
+            binding.sourceTextField.addTextChangedListener(sourceTextFieldWatcher)
+        }
         viewModel.targetText.observe(viewLifecycleOwner) { content ->
             binding.targetTextField.setText(content)
             if (content.isNullOrEmpty()) {

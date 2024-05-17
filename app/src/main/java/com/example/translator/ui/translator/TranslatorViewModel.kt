@@ -1,5 +1,6 @@
 package com.example.translator.ui.translator
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,7 +38,7 @@ class TranslatorViewModel(
 
                     val response = translationRepository.translateText(request)
 
-                    targetText.value = response?.translation ?: ""
+                    targetText.value = response?.targetText ?: ""
                 }
             }
         }
@@ -58,7 +59,9 @@ class TranslatorViewModel(
 
                 val response = translationRepository.translateImage(request, image)
 
-                targetText.value = response?.translation ?: ""
+                Log.d("IMAGE RESPONSE", "${response?.sourceText}: ${response?.targetText}")
+                sourceText.value = response?.sourceText ?: ""
+                targetText.value = response?.targetText ?: ""
             }
         }
     }
