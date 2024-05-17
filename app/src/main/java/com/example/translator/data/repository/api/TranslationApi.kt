@@ -5,6 +5,7 @@ import com.example.translator.data.model.TranslateImageResponse
 import com.example.translator.data.model.TranslateTextRequest
 import com.example.translator.data.model.TranslateTextResponse
 import okhttp3.MultipartBody
+import com.example.translator.data.model.TranslationHistoryResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -22,4 +23,7 @@ interface TranslationApi {
         @Part("body") body: TranslateImageRequest,
         @Part image: MultipartBody.Part,
     ): Call<TranslateImageResponse>
+
+    @GET("/translate/history")
+    fun fetchTranslationsList(): Call<TranslationHistoryResponse>
 }

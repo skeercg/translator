@@ -1,5 +1,6 @@
 package com.example.translator.ui.translator
 
+import com.example.translator.ui.history.HistoryFragment
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -16,6 +17,7 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.example.translator.R
 import com.example.translator.databinding.FragmentTranslatorBinding
@@ -53,6 +55,7 @@ class TranslatorFragment : Fragment() {
             binding.sourceTextField.setText(content)
             binding.sourceTextField.addTextChangedListener(sourceTextFieldWatcher)
         }
+
         viewModel.targetText.observe(viewLifecycleOwner) { content ->
             binding.targetTextField.setText(content)
             if (content.isNullOrEmpty()) {
@@ -114,6 +117,10 @@ class TranslatorFragment : Fragment() {
         binding.cameraButton.setOnClickListener {
             startCameraActivity()
         }
+        binding.historyButton.setOnClickListener {
+            // Handle click on the button
+            handleHistoryClick()
+        }
     }
 
     private fun setOnFocusChangeListener(): View.OnFocusChangeListener {
@@ -174,5 +181,25 @@ class TranslatorFragment : Fragment() {
 
     private fun startCameraActivity() {
         captureImageLauncher.launch(null)
+    }
+
+    private fun handleHistoryClick() {
+        // Create an instance of the AnotherFragment
+        val historyFragment = HistoryFragment()
+
+        // Get the FragmentManager
+        val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
+
+        // Begin the fragment transaction
+        val transaction = fragmentManager.beginTransaction()
+
+        // Replace the current fragment with AnotherFragment
+        transaction.replace(R.id.fragment_translator, historyFragment)
+
+        // Add the transaction to the back stack (optional)
+        transaction.addToBackStack(null)
+
+        // Commit the transaction
+        transaction.commit()
     }
 }

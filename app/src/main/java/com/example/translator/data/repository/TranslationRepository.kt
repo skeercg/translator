@@ -4,6 +4,7 @@ import com.example.translator.data.model.TranslateImageRequest
 import com.example.translator.data.model.TranslateImageResponse
 import com.example.translator.data.model.TranslateTextRequest
 import com.example.translator.data.model.TranslateTextResponse
+import com.example.translator.data.model.TranslationHistoryResponse
 import com.example.translator.data.repository.api.TranslationApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -38,6 +39,16 @@ class TranslationRepository(private val api: TranslationApi) {
                     .await<TranslateImageResponse>()
             } catch (e: Throwable) {
                 return@withContext null
+            }
+        }
+    }
+
+    suspend fun getTranslation(): TranslationHistoryResponse {
+        return withContext(Dispatchers.IO) {
+            try {
+                return@withContext api.fetchTranslationsList().await()
+            } catch (e: Exception) {
+                return@withContext TranslationHistoryResponse(emptyList())
             }
         }
     }
