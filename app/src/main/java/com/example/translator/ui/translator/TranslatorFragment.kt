@@ -4,19 +4,24 @@ import com.example.translator.ui.history.HistoryFragment
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.example.translator.R
 import com.example.translator.databinding.FragmentTranslatorBinding
+import com.example.translator.ui.camera.CameraActivity
 
 
 class TranslatorFragment : Fragment() {
@@ -34,24 +39,21 @@ class TranslatorFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         toggleVisibility(false)
-
-        binding.copyTargetTextButton.setOnClickListener {
-            copyToClipboard(viewModel.targetText.value)
-        }
-        binding.copySourceTextButton.setOnClickListener {
-            copyToClipboard(viewModel.sourceText.value)
-        }
+        setOnClickListeners()
 
         binding.sourceLanguage.text = setLanguage(viewModel.sourceLanguage)
         binding.targetLanguage.text = setLanguage(viewModel.targetLanguage)
         binding.sourceTextFieldLabel.text = setLanguage(viewModel.sourceLanguage)
         binding.targetTextFieldLabel.text = setLanguage(viewModel.targetLanguage)
 
-        binding.sourceTextField.addTextChangedListener(TranslatorTextWatcher())
+        val sourceTextFieldWatcher = TranslatorTextWatcher()
+        binding.sourceTextField.addTextChangedListener(sourceTextFieldWatcher)
         binding.sourceTextField.onFocusChangeListener = setOnFocusChangeListener()
 
-        binding.swapLanguageButton.setOnClickListener {
-            swapLanguage()
+        viewModel.sourceText.observe(viewLifecycleOwner) { content ->
+            binding.sourceTextField.removeTextChangedListener(sourceTextFieldWatcher)
+            binding.sourceTextField.setText(content)
+            binding.sourceTextField.addTextChangedListener(sourceTextFieldWatcher)
         }
 
         binding.historyButton.setOnClickListener {
@@ -93,7 +95,7 @@ class TranslatorFragment : Fragment() {
         binding.targetTextField.setText("")
 
         toggleVisibility(false)
-        viewModel.translate()
+        viewModel.translateText()
     }
 
     inner class TranslatorTextWatcher : TextWatcher {
@@ -101,10 +103,25 @@ class TranslatorFragment : Fragment() {
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             viewModel.sourceText.value = s.toString()
-            viewModel.translate()
+            viewModel.translateText()
         }
 
         override fun afterTextChanged(s: Editable?) {}
+    }
+
+    private fun setOnClickListeners() {
+        binding.copyTargetTextButton.setOnClickListener {
+            copyToClipboard(viewModel.targetText.value)
+        }
+        binding.copySourceTextButton.setOnClickListener {
+            copyToClipboard(viewModel.sourceText.value)
+        }
+        binding.swapLanguageButton.setOnClickListener {
+            swapLanguage()
+        }
+        binding.cameraButton.setOnClickListener {
+            startCameraActivity()
+        }
     }
 
     private fun setOnFocusChangeListener(): View.OnFocusChangeListener {
@@ -137,6 +154,34 @@ class TranslatorFragment : Fragment() {
         binding.targetTextFieldLabel.isVisible = value
         binding.copySourceTextButton.isVisible = value
         binding.copyTargetTextButton.isVisible = value
+        binding.divider.isVisible = value
+    }
+
+    private val captureImageLauncher = registerForActivityResult(
+        CameraActivityResultContract(),
+        CameraActivityResultCallback(),
+    )
+
+    inner class CameraActivityResultCallback : ActivityResultCallback<ByteArray?> {
+        override fun onActivityResult(result: ByteArray?) {
+            Log.d("ACTIVITY RESULT", "$result")
+
+            viewModel.translateImage(result)
+        }
+    }
+
+    inner class CameraActivityResultContract : ActivityResultContract<Unit?, ByteArray?>() {
+        override fun createIntent(context: Context, input: Unit?): Intent {
+            return Intent(context, CameraActivity::class.java)
+        }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): ByteArray? {
+            return intent?.getByteArrayExtra("image")
+        }
+    }
+
+    private fun startCameraActivity() {
+        captureImageLauncher.launch(null)
     }
 
     private fun handleHistoryClick() {

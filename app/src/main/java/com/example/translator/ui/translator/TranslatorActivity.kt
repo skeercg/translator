@@ -1,14 +1,20 @@
 package com.example.translator.ui.translator
 
 import android.content.Context
+import android.content.Intent
+import android.media.Image
 import android.os.Bundle
-import android.view.MotionEvent
-import android.view.inputmethod.InputMethodManager
+import android.util.Log
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.translator.R
 import com.example.translator.databinding.ActivityTranslatorBinding
+import com.example.translator.ui.camera.CameraActivity
 
 class TranslatorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTranslatorBinding
