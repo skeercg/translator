@@ -8,12 +8,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.translator.data.model.Translation
 import com.example.translator.databinding.FragmentHistoryBinding
 import com.example.translator.ui.history.recycler.HistoryAdapter
-import com.example.translator.ui.history.viewmodel.HistoryViewModel
-import com.example.translator.ui.history.viewmodel.HistoryViewModelFactory
+import com.example.translator.viewmodel.history.HistoryViewModel
+import com.example.translator.viewmodel.history.HistoryViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,12 +40,23 @@ class HistoryFragment : Fragment() {
             if (item != null) {
                 // Perform delete operation based on item or position
                 deleteTranslation(item)
+                adapter?.removeItem(position)
             }
         }
-        binding.recyclerViewHistory.adapter = adapter
-        binding.returnButton.setOnClickListener(){
-            handleReturnButtonClick()
+        with(binding){
+
+            recyclerViewHistory.adapter = adapter
+
+            recyclerViewHistory.layoutManager = LinearLayoutManager(requireContext())
+
+            returnButton.setOnClickListener{
+                handleReturnButtonClick()
+            }
         }
+
+
+        attachItemTouchHelper()
+
         // Observe history list LiveData
         viewModel.historyList.observe(viewLifecycleOwner) { translations ->
             adapter?.submitList(translations)
@@ -53,6 +65,7 @@ class HistoryFragment : Fragment() {
         // Fetch translations list
         fetchTranslationsList()
     }
+
 
     private fun fetchTranslationsList() {
         CoroutineScope(Dispatchers.Main).launch {
@@ -83,6 +96,8 @@ class HistoryFragment : Fragment() {
                 val item = adapter?.getTranslationAtPosition(position)
                 if (item != null) {
                     deleteTranslation(item)
+                    adapter?.removeItem(position) // Remove the item from the adapter
+                    adapter?.notifyItemRemoved(position) // Notify adapter of item removal
                 }
             }
         }

@@ -1,11 +1,9 @@
-package com.example.translator.ui.history.viewmodel
+package com.example.translator.viewmodel.history
 
-import com.example.translator.ui.translator.TranslatorViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.translator.data.repository.TranslationRepository
 import com.example.translator.data.repository.api.RetrofitClient
-import com.example.translator.data.repository.api.TranslationApi
 
 class HistoryViewModelFactory  : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

@@ -17,9 +17,8 @@ class HistoryAdapter(private val onDeleteClickListener: (Int) ->
         fun bind(translation: Translation) {
 
             with(binding) {
-                sourceLanguageText.text=translation.sourceText
+                sourceLanguageText.text = translation.sourceText
                 targetLanguageText.text = translation.targetText
-                //TODO:.setOnClickListener { onDeleteClickListener(adapterPosition)
             }
         }
     }

@@ -1,16 +1,11 @@
-package com.example.translator.ui.history.viewmodel
+package com.example.translator.viewmodel.history
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.translator.data.model.Translation
-import com.example.translator.data.repository.api.TranslationApi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import com.example.translator.data.repository.TranslationRepository
 
 class HistoryViewModel(private val translationRepository: TranslationRepository) : ViewModel() {
@@ -19,7 +14,7 @@ class HistoryViewModel(private val translationRepository: TranslationRepository)
     val historyList: LiveData<List<Translation>> get() = _historyList
 
     private val _error = MutableLiveData<String>()
-    val error: LiveData<String> get() = _error
+    //val error: LiveData<String> get() = _error
 
 
     fun fetchTranslationsList() {
