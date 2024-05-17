@@ -1,4 +1,4 @@
-package com.example.translator.viewmodel.history
+package com.example.translator.ui.history
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,7 +15,6 @@ class HistoryViewModel(private val translationRepository: TranslationRepository)
 
     private val _error = MutableLiveData<String>()
     //val error: LiveData<String> get() = _error
-
 
     fun fetchTranslationsList() {
         viewModelScope.launch {

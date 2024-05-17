@@ -1,4 +1,4 @@
-package com.example.translator.viewmodel.history
+package com.example.translator.ui.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

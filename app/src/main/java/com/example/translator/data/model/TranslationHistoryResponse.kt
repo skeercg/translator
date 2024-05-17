@@ -1,7 +1,7 @@
 package com.example.translator.data.model
 
 
-data class TranslationsResponse(
+data class TranslationHistoryResponse(
     val translations: List<Translation>
 )
 

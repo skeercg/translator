@@ -2,7 +2,7 @@ package com.example.translator.data.repository.api
 
 import com.example.translator.data.model.TranslateTextRequest
 import com.example.translator.data.model.TranslateTextResponse
-import com.example.translator.data.model.TranslationsResponse
+import com.example.translator.data.model.TranslationHistoryResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -13,7 +13,5 @@ interface TranslationApi {
     fun translate(@Body body: TranslateTextRequest): Call<TranslateTextResponse>
 
     @GET("/translate/history")
-    fun fetchTranslationsList(): Call<TranslationsResponse>
-
-
+    fun fetchTranslationsList(): Call<TranslationHistoryResponse>
 }
