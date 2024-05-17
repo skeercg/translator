@@ -1,10 +1,12 @@
 package com.example.translator.ui.translator
 
+import android.annotation.SuppressLint
 import com.example.translator.ui.history.HistoryFragment
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,17 +24,21 @@ import androidx.fragment.app.viewModels
 import com.example.translator.R
 import com.example.translator.databinding.FragmentTranslatorBinding
 import com.example.translator.ui.camera.CameraActivity
+import com.example.translator.ui.translator.favorite.FavoriteFragment
 
 
 class TranslatorFragment : Fragment() {
     private lateinit var binding: FragmentTranslatorBinding
 
     private val viewModel: TranslatorViewModel by viewModels { TranslatorViewModelFactory() }
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentTranslatorBinding.inflate(inflater, container, false)
+
+        sharedPreferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
 
         return binding.root
     }
@@ -121,6 +127,15 @@ class TranslatorFragment : Fragment() {
             // Handle click on the button
             handleHistoryClick()
         }
+
+        binding.favoriteButton.setOnClickListener{
+            handleFavoriteClick()
+        }
+
+        binding.favoriteButtonAdd.setOnClickListener{
+            saveToFavorite()
+
+        }
     }
 
     private fun setOnFocusChangeListener(): View.OnFocusChangeListener {
@@ -201,5 +216,35 @@ class TranslatorFragment : Fragment() {
 
         // Commit the transaction
         transaction.commit()
+    }
+
+
+    private fun handleFavoriteClick() {
+
+        val favoriteFragment = FavoriteFragment()
+
+        val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
+
+        val transaction = fragmentManager.beginTransaction()
+
+        transaction.replace(R.id.fragment_translator, favoriteFragment)
+        transaction.addToBackStack(null)
+
+        transaction.commit()
+    }
+
+
+    @SuppressLint("CommitPrefEdits")
+    private fun saveToFavorite(){
+        val sourceLabel = binding.sourceTextFieldLabel.text.toString()
+        val targetLabel = binding.targetTextFieldLabel.text.toString()
+        if(targetLabel.isNotEmpty() && sourceLabel.isNotEmpty()){
+            val editor = sharedPreferences.edit()
+            editor.putString("sourceText",sourceLabel)
+            editor.putString("targetText",targetLabel)
+            editor.apply()
+
+        }
+
     }
 }
