@@ -45,7 +45,6 @@
         android:layout_weight="0.9"
         android:clipToPadding="false"
         android:padding="16dp"
+        android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical" />
-
-
 </LinearLayout>

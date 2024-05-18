@@ -16,10 +16,8 @@ class FavoriteViewModel(
     private val _favoriteList = MutableLiveData<ArrayList<Favorite>>()
     val favoriteList: LiveData<ArrayList<Favorite>> get() = _favoriteList
 
-    private val _error = MutableLiveData<String>()
-
     fun getFavorites() {
-        val favoritesJsonString = sharedPreferences?.getString("favorite", "")
+        val favoritesJsonString = sharedPreferences?.getString("favorite", null)
 
         val gson = Gson()
 
@@ -30,6 +28,7 @@ class FavoriteViewModel(
         } else {
             ArrayList<Favorite>()
         }
+
         _favoriteList.value = favorites
     }
 }
