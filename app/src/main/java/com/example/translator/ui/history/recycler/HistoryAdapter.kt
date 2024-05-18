@@ -7,18 +7,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.translator.data.model.Translation
 import com.example.translator.databinding.HistoryItemBinding
 
-class HistoryAdapter(private val onDeleteClickListener: (Int) ->
-    Unit): ListAdapter<Translation, HistoryAdapter.ViewHolder>(HistoryDiffUtil()) {
+class HistoryAdapter(
+    private val addToFavorite: (String, String) ->
+    Unit
+) : ListAdapter<Translation, HistoryAdapter.ViewHolder>(HistoryDiffUtil()) {
 
     inner class ViewHolder(
         private val binding: HistoryItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(translation: Translation) {
-
             with(binding) {
                 sourceLanguageText.text = translation.sourceText
                 targetLanguageText.text = translation.targetText
+                favoriteButton.setOnClickListener {
+                    addToFavorite(translation.sourceText, translation.targetText)
+                }
             }
         }
     }
@@ -38,12 +42,12 @@ class HistoryAdapter(private val onDeleteClickListener: (Int) ->
     fun getTranslationAtPosition(position: Int): Translation {
         return getItem(position)
     }
+
     fun removeItem(position: Int) {
         val list = currentList.toMutableList()
         list.removeAt(position)
         submitList(list)
     }
-
 
 
 }
