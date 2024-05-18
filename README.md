@@ -22,3 +22,13 @@ The 3rd request is GET request, that was used to implement history of translatio
 
 Zhaxalykov Maksat, Abikhas Alikhan, Alishpanov Sultanmakhmud
 
+
+# Screenshots of application
+
+<p float="left">
+  <img src="screenshots/1.png" width="320" />
+  <img src="screenshots/2.png" width="320" /> 
+  <img src="screenshots/3.png" width="320" />
+  <img src="screenshots/4.png" width="320" />
+  <img src="screenshots/5.png" width="320" />
+</p>
