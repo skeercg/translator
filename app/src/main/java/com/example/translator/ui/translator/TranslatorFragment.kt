@@ -58,10 +58,8 @@ class TranslatorFragment : Fragment() {
         binding.sourceTextField.addTextChangedListener(sourceTextFieldWatcher)
         binding.sourceTextField.onFocusChangeListener = setOnFocusChangeListener()
 
-        viewModel.sourceText.observe(viewLifecycleOwner) { content ->
-            binding.sourceTextField.removeTextChangedListener(sourceTextFieldWatcher)
+        viewModel.pasteSourceText.observe(viewLifecycleOwner) { content ->
             binding.sourceTextField.setText(content)
-            binding.sourceTextField.addTextChangedListener(sourceTextFieldWatcher)
         }
 
         viewModel.targetText.observe(viewLifecycleOwner) { content ->

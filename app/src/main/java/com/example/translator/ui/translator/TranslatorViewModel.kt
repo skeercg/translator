@@ -24,6 +24,7 @@ class TranslatorViewModel(
     var sourceLanguage: String = "eng"
 
     val sourceText: MutableLiveData<String> = MutableLiveData<String>()
+    val pasteSourceText: MutableLiveData<String> = MutableLiveData<String>()
     val targetText: MutableLiveData<String> = MutableLiveData<String>()
 
     private var translationTextJob: Job? = null
@@ -44,6 +45,8 @@ class TranslatorViewModel(
                     val response = translationRepository.translateText(request)
 
                     targetText.value = response?.targetText ?: ""
+                } else {
+                    targetText.value = ""
                 }
             }
         }
@@ -66,6 +69,7 @@ class TranslatorViewModel(
 
                 Log.d("IMAGE RESPONSE", "${response?.sourceText}: ${response?.targetText}")
                 sourceText.value = response?.sourceText ?: ""
+                pasteSourceText.value = response?.sourceText ?: ""
                 targetText.value = response?.targetText ?: ""
             }
         }
