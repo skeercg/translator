@@ -1,12 +1,10 @@
 package com.example.translator.ui.translator
 
-import android.annotation.SuppressLint
 import com.example.translator.ui.history.HistoryFragment
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,23 +20,27 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.example.translator.R
+import com.example.translator.data.repository.TranslationRepository
+import com.example.translator.data.repository.api.RetrofitClient
 import com.example.translator.databinding.FragmentTranslatorBinding
 import com.example.translator.ui.camera.CameraActivity
-import com.example.translator.ui.translator.favorite.FavoriteFragment
+import com.example.translator.ui.favorite.FavoriteFragment
 
 
 class TranslatorFragment : Fragment() {
     private lateinit var binding: FragmentTranslatorBinding
 
-    private val viewModel: TranslatorViewModel by viewModels { TranslatorViewModelFactory() }
-    private lateinit var sharedPreferences: SharedPreferences
+    private val viewModel: TranslatorViewModel by viewModels {
+        TranslatorViewModelFactory(
+            TranslationRepository(api = RetrofitClient.translationApi),
+            activity?.getSharedPreferences(getString(R.string.favorite), Context.MODE_PRIVATE)
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentTranslatorBinding.inflate(inflater, container, false)
-
-        sharedPreferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
 
         return binding.root
     }
@@ -127,14 +129,11 @@ class TranslatorFragment : Fragment() {
             // Handle click on the button
             handleHistoryClick()
         }
-
-        binding.favoriteButton.setOnClickListener{
+        binding.favoriteButton.setOnClickListener {
             handleFavoriteClick()
         }
-
-        binding.favoriteButtonAdd.setOnClickListener{
+        binding.favoriteButtonAdd.setOnClickListener {
             saveToFavorite()
-
         }
     }
 
@@ -168,6 +167,7 @@ class TranslatorFragment : Fragment() {
         binding.targetTextFieldLabel.isVisible = value
         binding.copySourceTextButton.isVisible = value
         binding.copyTargetTextButton.isVisible = value
+        binding.favoriteButtonAdd.isVisible = value
         binding.divider.isVisible = value
     }
 
@@ -220,7 +220,6 @@ class TranslatorFragment : Fragment() {
 
 
     private fun handleFavoriteClick() {
-
         val favoriteFragment = FavoriteFragment()
 
         val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
@@ -233,18 +232,7 @@ class TranslatorFragment : Fragment() {
         transaction.commit()
     }
 
-
-    @SuppressLint("CommitPrefEdits")
-    private fun saveToFavorite(){
-        val sourceLabel = binding.sourceTextFieldLabel.text.toString()
-        val targetLabel = binding.targetTextFieldLabel.text.toString()
-        if(targetLabel.isNotEmpty() && sourceLabel.isNotEmpty()){
-            val editor = sharedPreferences.edit()
-            editor.putString("sourceText",sourceLabel)
-            editor.putString("targetText",targetLabel)
-            editor.apply()
-
-        }
-
+    private fun saveToFavorite() {
+        viewModel.saveToFavorite()
     }
 }

@@ -97,17 +97,9 @@
                         android:layout_marginBottom="24dp"
                         android:background="@null"
                         android:src="@drawable/round_content_copy_24"
-                        app:tint="@color/dark_gray"/>
+                        app:tint="@color/dark_gray" />
 
-                    <ImageButton
-                        android:id="@+id/favorite_button_add"
-                        android:background="@null"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginBottom="24dp"
-                        android:src="@drawable/round_star_24"
-                        app:tint="@color/yellow" />
+
                 </LinearLayout>
 
 
@@ -148,19 +140,36 @@
                         android:textColor="@color/light_blue"
                         android:textSize="28sp" />
 
-                    <ImageButton
-                        android:id="@+id/copy_target_text_button"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:background="@null"
-                        android:src="@drawable/round_content_copy_24"
-                        app:tint="@color/light_blue" />
+                        android:gravity="end"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:id="@+id/favorite_button_add"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginBottom="24dp"
+                            android:background="@null"
+                            android:src="@drawable/round_star_24"
+                            app:tint="@color/light_blue" />
+
+                        <ImageButton
+                            android:id="@+id/copy_target_text_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:background="@null"
+                            android:src="@drawable/round_content_copy_24"
+                            app:tint="@color/light_blue" />
+                    </LinearLayout>
+
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
-
-
     </LinearLayout>
 
     <!-- Languages Selection Area -->
@@ -215,8 +224,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginHorizontal="16dp"
-            android:padding="16dp"
             android:background="@drawable/camera_button_background"
+            android:padding="16dp"
             android:scaleType="fitCenter"
             android:src="@drawable/round_camera_alt_24"
             app:tint="@color/white" />
