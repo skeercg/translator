@@ -20,14 +20,22 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.example.translator.R
+import com.example.translator.data.repository.TranslationRepository
+import com.example.translator.data.repository.api.RetrofitClient
 import com.example.translator.databinding.FragmentTranslatorBinding
 import com.example.translator.ui.camera.CameraActivity
+import com.example.translator.ui.favorite.FavoriteFragment
 
 
 class TranslatorFragment : Fragment() {
     private lateinit var binding: FragmentTranslatorBinding
 
-    private val viewModel: TranslatorViewModel by viewModels { TranslatorViewModelFactory() }
+    private val viewModel: TranslatorViewModel by viewModels {
+        TranslatorViewModelFactory(
+            TranslationRepository(api = RetrofitClient.translationApi),
+            activity?.getSharedPreferences(getString(R.string.favorite), Context.MODE_PRIVATE)
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -121,6 +129,12 @@ class TranslatorFragment : Fragment() {
             // Handle click on the button
             handleHistoryClick()
         }
+        binding.favoriteButton.setOnClickListener {
+            handleFavoriteClick()
+        }
+        binding.favoriteButtonAdd.setOnClickListener {
+            saveToFavorite()
+        }
     }
 
     private fun setOnFocusChangeListener(): View.OnFocusChangeListener {
@@ -153,6 +167,7 @@ class TranslatorFragment : Fragment() {
         binding.targetTextFieldLabel.isVisible = value
         binding.copySourceTextButton.isVisible = value
         binding.copyTargetTextButton.isVisible = value
+        binding.favoriteButtonAdd.isVisible = value
         binding.divider.isVisible = value
     }
 
@@ -201,5 +216,23 @@ class TranslatorFragment : Fragment() {
 
         // Commit the transaction
         transaction.commit()
+    }
+
+
+    private fun handleFavoriteClick() {
+        val favoriteFragment = FavoriteFragment()
+
+        val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
+
+        val transaction = fragmentManager.beginTransaction()
+
+        transaction.replace(R.id.fragment_translator, favoriteFragment)
+        transaction.addToBackStack(null)
+
+        transaction.commit()
+    }
+
+    private fun saveToFavorite() {
+        viewModel.saveToFavorite()
     }
 }

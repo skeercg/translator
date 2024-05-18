@@ -1,19 +1,24 @@
 package com.example.translator.ui.translator
 
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.translator.data.model.Favorite
 import com.example.translator.data.model.TranslateImageRequest
 import com.example.translator.data.model.TranslateTextRequest
 import com.example.translator.data.model.TranslateTextResponse
 import com.example.translator.data.repository.TranslationRepository
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class TranslatorViewModel(
-    private val translationRepository: TranslationRepository
+    private val translationRepository: TranslationRepository,
+    private val sharedPreferences: SharedPreferences?
 ) : ViewModel() {
     var targetLanguage: String = "rus"
     var sourceLanguage: String = "eng"
@@ -64,5 +69,31 @@ class TranslatorViewModel(
                 targetText.value = response?.targetText ?: ""
             }
         }
+    }
+
+    fun saveToFavorite() {
+        var favoritesJsonString = sharedPreferences?.getString("favorite", null)
+
+        val gson = Gson()
+
+        val favorites = if (favoritesJsonString != null) {
+            val type = object : TypeToken<ArrayList<Favorite>>() {}.type
+
+            gson.fromJson(favoritesJsonString, type)
+        } else {
+            ArrayList<Favorite>()
+        }
+
+        val sourceText = sourceText.value ?: ""
+        val targetText = targetText.value ?: ""
+
+        favorites.add(Favorite(sourceText, targetText))
+
+        val editor = sharedPreferences?.edit()
+
+        favoritesJsonString = gson.toJson(favorites)
+
+        editor?.putString("favorite", favoritesJsonString)
+        editor?.apply()
     }
 }

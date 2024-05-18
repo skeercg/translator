@@ -1,28 +1,24 @@
-package com.example.translator.ui.history.recycler
+package com.example.translator.ui.favorite.recycler
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.translator.data.model.Favorite
 import com.example.translator.data.model.Translation
-import com.example.translator.databinding.HistoryItemBinding
+import com.example.translator.databinding.FavoriteItemBinding
 
-class HistoryAdapter(
-    private val addToFavorite: (String, String) ->
-    Unit
-) : ListAdapter<Translation, HistoryAdapter.ViewHolder>(HistoryDiffUtil()) {
+class FavoriteAdapter :
+    ListAdapter<Favorite, FavoriteAdapter.ViewHolder>(FavoriteDiffUtil()) {
 
     inner class ViewHolder(
-        private val binding: HistoryItemBinding
+        private val binding: FavoriteItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(translation: Translation) {
+        fun bind(favorite: Favorite) {
             with(binding) {
-                sourceLanguageText.text = translation.sourceText
-                targetLanguageText.text = translation.targetText
-                favoriteButton.setOnClickListener {
-                    addToFavorite(translation.sourceText, translation.targetText)
-                }
+                binding.sourceLanguageText.text = favorite.sourceText
+                binding.targetLanguageText.text = favorite.targetText
             }
         }
     }
@@ -33,13 +29,13 @@ class HistoryAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            HistoryItemBinding.inflate(
+            FavoriteItemBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
         )
     }
 
-    fun getTranslationAtPosition(position: Int): Translation {
+    fun getTranslationAtPosition(position: Int): Favorite {
         return getItem(position)
     }
 
@@ -48,6 +44,5 @@ class HistoryAdapter(
         list.removeAt(position)
         submitList(list)
     }
-
 
 }
