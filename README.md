@@ -22,6 +22,12 @@ The 3rd request is GET request, that was used to implement history of translatio
 
 Zhaxalykov Maksat, Abikhas Alikhan, Alishpanov Sultanmakhmud
 
+# Usage
+
+Before installing on android emulator run
+``` 
+docker run -e API_KEY=<YOUR_API_KEY> -d -p 8080:8080 skeercg/translator-api:0.0.2
+```
 
 # Screenshots of application
 
